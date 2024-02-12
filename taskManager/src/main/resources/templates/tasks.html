@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager</title>
+</head>
+<body>
+<h2>Tasks</h2>
+<div>
+    <a href="/add">Add New Task</a>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>Description</th>
+        <th>Status</th>
+        <th>CreatedAt</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="task : ${tasks}">
+        <td th:text="${task.description}"></td>
+        <td th:text="${task.status}"></td>
+        <td th:text="${#temporals.format(task.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+
+        <td>
+            <a th:href="@{/edit/{id}(id=${task.id})}">Edit</a>
+            <a th:href="@{/delete/{id}(id=${task.id})}" onclick="return confirm('Are you sure?')">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

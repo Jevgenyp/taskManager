@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Task</title>
+</head>
+<body>
+<h2>Add New Task</h2>
+<form action="/add" method="post">
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" required>
+    <label for="status">Status:</label>
+    <select id="status" name="status">
+        <option value="NOT_STARTED">Not Started</option>
+        <option value="IN_PROGRESS">In Progress</option>
+        <option value="COMPLETED">Completed</option>
+    </select>
+    <button type="submit">Add Task</button>
+</form>
+<a href="/">Cancel</a>
+</body>
+</html>
