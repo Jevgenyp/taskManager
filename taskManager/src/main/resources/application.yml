@@ -1,6 +1,13 @@
+server:
+  port: 8081
+
 spring:
+  application:
+    name: task-manager
+  main:
+    web-application-type: reactive
   datasource:
-    url: jdbc:postgresql://localhost:5432/TaskManagerDB  # Updated database name to match Docker
+    url: jdbc:postgresql://localhost:5432/TaskManagerDB
     username: root
     password: 123456
     driver-class-name: org.postgresql.Driver
@@ -10,8 +17,12 @@ spring:
     show-sql: true
     properties:
       hibernate:
-
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

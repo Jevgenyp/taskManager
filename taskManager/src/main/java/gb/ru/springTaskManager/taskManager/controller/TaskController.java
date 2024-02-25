@@ -2,13 +2,11 @@ package gb.ru.springTaskManager.taskManager.controller;
 
 import gb.ru.springTaskManager.taskManager.aspects.TrackUserAction;
 import gb.ru.springTaskManager.taskManager.model.Task;
-import gb.ru.springTaskManager.taskManager.model.TaskStatus;
 import gb.ru.springTaskManager.taskManager.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class TaskController {
