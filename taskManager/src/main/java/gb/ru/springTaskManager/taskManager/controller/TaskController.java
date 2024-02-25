@@ -1,5 +1,6 @@
 package gb.ru.springTaskManager.taskManager.controller;
 
+import gb.ru.springTaskManager.taskManager.aspects.TrackUserAction;
 import gb.ru.springTaskManager.taskManager.model.Task;
 import gb.ru.springTaskManager.taskManager.model.TaskStatus;
 import gb.ru.springTaskManager.taskManager.repositories.TaskRepository;
@@ -33,10 +34,12 @@ public class TaskController {
     }
 
     @PostMapping("/add")
+    @TrackUserAction // Добавьте эту аннотацию
     public String addTask(@ModelAttribute Task task) {
         taskRepository.save(task);
         return "redirect:/"; // Redirect to task list after adding a task
     }
+
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Long id, Model model) {
