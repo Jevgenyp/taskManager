@@ -6,6 +6,9 @@ import gb.ru.springTaskManager.taskManager.repositories.TaskRepository;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,10 @@ public class TaskController {
 
     private final TaskRepository taskRepository;
     private final Counter requestCounter = Metrics.counter("add_note_count");
+
+    @Autowired
+    private MessageChannel taskChannel;
+
 
     @Autowired
     public TaskController(TaskRepository taskRepository) {
@@ -38,13 +45,18 @@ public class TaskController {
     }
 
     @PostMapping("/add")
-    @TrackUserAction // Добавьте эту аннотацию
+    @TrackUserAction // Аннотация для AOP
     public String addTask(@ModelAttribute Task task) {
         taskRepository.save(task);
         requestCounter.increment();
-        return "redirect:/"; // Redirect to task list after adding a task
-    }
 
+        // Конвертация задачи в строку (или другой формат по вашему усмотрению) и отправка
+        String taskInfo = convertTaskToString(task);
+        Message<String> message = MessageBuilder.withPayload(taskInfo).build();
+        taskChannel.send(message);
+
+        return "redirect:/";
+    }
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Long id, Model model) {
@@ -56,15 +68,23 @@ public class TaskController {
 
     @PostMapping("/update/{id}")
     public String updateTask(@PathVariable("id") Long id, @ModelAttribute("task") Task task) {
-        taskRepository.save(task); // Assumes task.id is already set
+        taskRepository.save(task);
         requestCounter.increment();
 
-        return "redirect:/"; // Redirect to task list after updating a task
+        // Повторно используем логику отправки данных в канал
+        String taskInfo = convertTaskToString(task);
+        Message<String> message = MessageBuilder.withPayload(taskInfo).build();
+        taskChannel.send(message);
+
+        return "redirect:/";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteTask(@PathVariable("id") Long id) {
         taskRepository.deleteById(id);
         return "redirect:/"; // Redirect back to the task list
+    }
+    private String convertTaskToString(Task task) {
+        return "Task ID: " + task.getId() + ", Description: " + task.getDescription() + ", Status: " + task.getStatus();
     }
 }
