@@ -3,15 +3,21 @@ package gb.ru.springTaskManager.taskManager.controller;
 import gb.ru.springTaskManager.taskManager.aspects.TrackUserAction;
 import gb.ru.springTaskManager.taskManager.model.Task;
 import gb.ru.springTaskManager.taskManager.repositories.TaskRepository;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class TaskController {
 
     private final TaskRepository taskRepository;
+    private final Counter requestCounter = Metrics.counter("add_note_count");
 
     @Autowired
     public TaskController(TaskRepository taskRepository) {
@@ -35,6 +41,7 @@ public class TaskController {
     @TrackUserAction // Добавьте эту аннотацию
     public String addTask(@ModelAttribute Task task) {
         taskRepository.save(task);
+        requestCounter.increment();
         return "redirect:/"; // Redirect to task list after adding a task
     }
 
@@ -50,6 +57,8 @@ public class TaskController {
     @PostMapping("/update/{id}")
     public String updateTask(@PathVariable("id") Long id, @ModelAttribute("task") Task task) {
         taskRepository.save(task); // Assumes task.id is already set
+        requestCounter.increment();
+
         return "redirect:/"; // Redirect to task list after updating a task
     }
 
